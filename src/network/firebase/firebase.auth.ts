@@ -6,6 +6,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  NextOrObserver,
+  User,
 } from 'firebase/auth';
 
 const googleAuthProvider = new GoogleAuthProvider();
@@ -16,13 +18,19 @@ googleAuthProvider.setCustomParameters({
 export const signInWithGooglePopup = () =>
   signInWithPopup(firebaseAuth, googleAuthProvider);
 
-export const createAuthUserWithEmailAndPassword = async (email, password) => {
+export const createAuthUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   if (!email || !password) return;
 
   return await createUserWithEmailAndPassword(firebaseAuth, email, password);
 };
 
-export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+export const signInAuthUserWithEmailAndPassword = async (
+  email: string,
+  password: string
+) => {
   if (!email || !password) return;
 
   return await signInWithEmailAndPassword(firebaseAuth, email, password);
@@ -30,5 +38,5 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 
 export const signOutLoggedInUser = async () => await signOut(firebaseAuth);
 
-export const onAuthStateChangedObserver = (callback) =>
+export const onAuthStateChangedObserver = (callback: NextOrObserver<User>) =>
   onAuthStateChanged(firebaseAuth, callback);

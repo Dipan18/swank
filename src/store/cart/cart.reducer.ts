@@ -1,6 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { CartItem } from './cart.type';
+import { CategoryItem } from '../categories/category.type';
 
-const addProductToCart = (cartItems, productToAdd) => {
+const addProductToCart = (
+  cartItems: CartItem[],
+  productToAdd: CategoryItem
+) => {
   const doesProductToAddExistInCart = cartItems.find(
     (cartItem) => cartItem.id === productToAdd.id
   );
@@ -16,26 +21,38 @@ const addProductToCart = (cartItems, productToAdd) => {
   return [...cartItems, { ...productToAdd, quantity: 1 }];
 };
 
-const removeProductFromCart = (cartItems, cartItemToRemove) => {
+const removeProductFromCart = (
+  cartItems: CartItem[],
+  cartItemToRemove: CategoryItem
+) => {
   const productToRemove = cartItems.find(
     (cartItem) => cartItem.id === cartItemToRemove.id
   );
 
-  if (productToRemove.quantity === 1) {
+  if (productToRemove?.quantity === 1) {
     return cartItems.filter((cartItem) => cartItem.id !== productToRemove.id);
   }
 
   return cartItems.map((cartItem) =>
-    cartItem.id === productToRemove.id
+    cartItem.id === productToRemove?.id
       ? { ...cartItem, quantity: cartItem.quantity - 1 }
       : cartItem
   );
 };
 
-const clearProductFromCart = (cartItems, cartItemToClear) =>
-  cartItems.filter((cartItem) => cartItem.id !== cartItemToClear.id);
+const clearProductFromCart = (
+  cartItems: CartItem[],
+  cartItemToClear: CategoryItem
+) => cartItems.filter((cartItem) => cartItem.id !== cartItemToClear.id);
 
-const INITIAL_STATE = {
+type CartSliceState = {
+  isCartOpen: boolean;
+  cartItems: CartItem[];
+  itemsInCartCount: number;
+  cartTotal: number;
+};
+
+const initialState: CartSliceState = {
   isCartOpen: false,
   cartItems: [],
   itemsInCartCount: 0,
@@ -44,19 +61,18 @@ const INITIAL_STATE = {
 
 const cartSlice = createSlice({
   name: 'cart',
-  initialState: INITIAL_STATE,
+  initialState,
   reducers: {
-    setIsCartOpen: (state, action) => {
+    setIsCartOpen: (state, action: PayloadAction<boolean>) => {
       state.isCartOpen = action.payload;
     },
-    addItemToCart: (state, action) => {
-      console.log('payloada', action.payload);
+    addItemToCart: (state, action: PayloadAction<CategoryItem>) => {
       state.cartItems = addProductToCart(state.cartItems, action.payload);
     },
-    removeItemFromCart: (state, action) => {
+    removeItemFromCart: (state, action: PayloadAction<CategoryItem>) => {
       state.cartItems = removeProductFromCart(state.cartItems, action.payload);
     },
-    clearItemFromCart: (state, action) => {
+    clearItemFromCart: (state, action: PayloadAction<CategoryItem>) => {
       state.cartItems = clearProductFromCart(state.cartItems, action.payload);
     },
   },

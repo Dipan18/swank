@@ -1,3 +1,5 @@
+import { User } from 'firebase/auth';
+import { Category } from '../../store/categories/category.type';
 import { firestore } from './firebase.config';
 import {
   doc,
@@ -7,12 +9,18 @@ import {
   writeBatch,
   getDocs,
   query,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore';
+import { UserData } from '../../store/user/user.type';
+
+type AdditionalData = {
+  displayName?: string;
+};
 
 export const createUserAccountFromAuthResponse = async (
-  authenticatedUser,
-  additionalData = {}
-) => {
+  authenticatedUser: User,
+  additionalData = {} as AdditionalData
+): Promise<void | QueryDocumentSnapshot<UserData>> => {
   const userDocRef = doc(firestore, 'users', authenticatedUser.uid);
   const userSnapshot = await getDoc(userDocRef);
 
@@ -32,12 +40,18 @@ export const createUserAccountFromAuthResponse = async (
     }
   }
 
-  return userDocRef;
+  return userSnapshot as QueryDocumentSnapshot<UserData>;
 };
 
-export const createCollectionAndInsertDocuments = async (
-  collectionKey,
-  documentsToInsert
+type DocumentsToInsert = {
+  title: string;
+};
+
+export const createCollectionAndInsertDocuments = async <
+  T extends DocumentsToInsert
+>(
+  collectionKey: string,
+  documentsToInsert: T[]
 ) => {
   const collectionRef = collection(firestore, collectionKey);
   const batch = writeBatch(firestore);
@@ -51,10 +65,10 @@ export const createCollectionAndInsertDocuments = async (
   console.log('done');
 };
 
-export const fetchCategoriesAndDocuments = async () => {
+export const fetchCategoriesAndDocuments = async (): Promise<Category[]> => {
   const collectionRef = collection(firestore, 'categories');
   const q = query(collectionRef);
   const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map((doc) => doc.data());
+  return querySnapshot.docs.map((doc) => doc.data() as Category);
 };
