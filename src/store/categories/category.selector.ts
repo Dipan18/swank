@@ -9,14 +9,18 @@ export const selectCategories = createSelector(
   (categoriesSlice) => categoriesSlice.categories
 );
 
+type AccumulatorType = {
+  [key: string]: CategoryItem[];
+};
+
 export const selectCategoriesMap = createSelector(
   [selectCategories],
   (categories) =>
     categories.reduce((acc, category) => {
       const { title, items } = category;
-      acc.set(title.toLocaleLowerCase(), items);
+      acc[title.toLocaleLowerCase()] = items;
       return acc;
-    }, new Map<string, CategoryItem[]>())
+    }, {} as AccumulatorType)
 );
 
 export const selectCategoriesIsLoading = createSelector(
