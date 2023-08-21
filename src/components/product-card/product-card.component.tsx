@@ -8,10 +8,10 @@ import {
   ProductName,
   ProductPrice,
 } from './product-card.styles';
-import { CartItem } from '../../store/cart/cart.type';
+import { CategoryItem } from '../../store/categories/category.type';
 
 type ProductCardProps = {
-  product: CartItem;
+  product: CategoryItem;
 };
 
 const ProductCard = ({ product }: ProductCardProps) => {
