@@ -10,8 +10,8 @@ const shrinkLabelStyles = css`
 `;
 
 type InputLabelProps = {
-  shrink: boolean
-}
+  $shrink: boolean;
+};
 
 export const InputLabel = styled.label<InputLabelProps>`
   color: ${subColor};
@@ -23,7 +23,7 @@ export const InputLabel = styled.label<InputLabelProps>`
   top: 10px;
   transition: 300ms ease all;
 
-  ${({ shrink }) => shrink && shrinkLabelStyles}
+  ${({ $shrink }) => $shrink && shrinkLabelStyles}
 
   &.shrink {
     @include shrinkLabel();
