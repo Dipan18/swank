@@ -1,14 +1,15 @@
-import { useState, useContext } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 
-import FormInput from '../form-input/form-input.component';
-import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
-
+import { AuthError, AuthErrorCodes } from 'firebase/auth';
 import {
   signInWithGooglePopup,
   signInAuthUserWithEmailAndPassword,
 } from '../../network/firebase/firebase.auth';
 
+import FormInput from '../form-input/form-input.component';
+import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
 import { SignInContainer, ButtonsContainer } from './sign-in-form.styles';
+
 
 const defaultFormInputValues = {
   email: '',
@@ -22,7 +23,7 @@ const SignInForm = () => {
 
   const { email, password } = formInputValues;
 
-  const handleFormInputUpdate = (event) => {
+  const handleFormInputUpdate = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
     setFormInputValues({ ...formInputValues, [name]: value });
@@ -32,18 +33,18 @@ const SignInForm = () => {
     await signInWithGooglePopup();
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      const response = await signInAuthUserWithEmailAndPassword(
+      await signInAuthUserWithEmailAndPassword(
         email,
         password
       );
     } catch (error) {
       if (
-        error.code === 'auth/user-not-found' ||
-        error.code === 'auth/wrong-password'
+        (error as AuthError).code === AuthErrorCodes.NULL_USER ||
+        (error as AuthError).code === AuthErrorCodes.INVALID_PASSWORD
       ) {
         alert('Wrong email or password');
       } else {
@@ -77,7 +78,7 @@ const SignInForm = () => {
         <ButtonsContainer>
           <Button type="submit">Sign In</Button>
           <Button
-            type="button"
+            type='button'
             buttonType={BUTTON_TYPE_CLASSES.google}
             onClick={signInWithGoogle}
           >

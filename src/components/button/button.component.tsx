@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { FC, ButtonHTMLAttributes } from 'react';
 import {
   BaseButton,
   GoogleSignInButton,
@@ -20,13 +20,11 @@ const getButton = (buttonType = BUTTON_TYPE_CLASSES.base) =>
   }[buttonType]);
 
 type ButtonProps = {
-  children: ReactNode;
-  buttonType?: BUTTON_TYPE_CLASSES;
-  shouldShowSpinner?: boolean;
-  otherAttributes: ButtonHTMLAttributes<HTMLButtonElement>
-}
+  buttonType?: BUTTON_TYPE_CLASSES,
+  shouldShowSpinner?: boolean
+} & ButtonHTMLAttributes<HTMLButtonElement>
 
-const Button = ({
+const Button: FC<ButtonProps> = ({
   children,
   buttonType,
   shouldShowSpinner = false,

@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 
 import { createAuthUserWithEmailAndPassword } from '../../network/firebase/firebase.auth';
 import { createUserAccountFromAuthResponse } from '../../network/firebase/firebase.firestore';
@@ -6,6 +6,7 @@ import { createUserAccountFromAuthResponse } from '../../network/firebase/fireba
 import FormInput from '../form-input/form-input.component';
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
 import { SignUpContainer } from './sign-up-form.styles';
+import { AuthError, AuthErrorCodes, UserCredential } from 'firebase/auth';
 
 const defaultFormInputValues = {
   displayName: '',
@@ -25,12 +26,12 @@ const SignUpForm = () => {
     setFormInputValues(defaultFormInputValues);
   };
 
-  const handleFormInputUpdate = (event) => {
+  const handleFormInputUpdate = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormInputValues({ ...formInputValues, [name]: value });
   };
 
-  const handleFormSubmit = async (event) => {
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (password !== confirmPassword) {
@@ -39,15 +40,15 @@ const SignUpForm = () => {
     }
 
     try {
-      const { user } = await createAuthUserWithEmailAndPassword(
+      const response: UserCredential | undefined = await createAuthUserWithEmailAndPassword(
         email,
         password
       );
 
-      await createUserAccountFromAuthResponse(user, { displayName });
+      await createUserAccountFromAuthResponse(response?.user!, { displayName });
       resetFormInputs();
     } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
+      if ((error as AuthError).code === AuthErrorCodes.EMAIL_EXISTS) {
         alert('User already exists!');
       } else {
         console.log('Error creating auth user!', error);

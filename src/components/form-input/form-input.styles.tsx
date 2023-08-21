@@ -9,7 +9,11 @@ const shrinkLabelStyles = css`
   color: ${mainColor};
 `;
 
-export const InputLabel = styled.label`
+type InputLabelProps = {
+  shrink: boolean
+}
+
+export const InputLabel = styled.label<InputLabelProps>`
   color: ${subColor};
   font-size: 16px;
   font-weight: normal;
@@ -19,7 +23,7 @@ export const InputLabel = styled.label`
   top: 10px;
   transition: 300ms ease all;
 
-  ${({ $shrink }) => $shrink && shrinkLabelStyles}
+  ${({ shrink }) => shrink && shrinkLabelStyles}
 
   &.shrink {
     @include shrinkLabel();
