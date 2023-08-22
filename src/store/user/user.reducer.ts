@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { UserData } from './user.type';
+import { User } from 'firebase/auth';
 
 type UserSliceState = {
-  currentUser: UserData | null;
+  currentUser: User | null;
 };
 
 const initialState: UserSliceState = {
@@ -13,7 +13,7 @@ const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
   reducers: {
-    setCurrentUser: (state, action: PayloadAction<UserData>) => {
+    setCurrentUser: (state, action: PayloadAction<User | null>) => {
       state.currentUser = action.payload;
     },
   },
